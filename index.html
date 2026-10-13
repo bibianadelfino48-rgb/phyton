@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aprende Python con Thonny - Itinerario de Programación</title>
+  <!-- Canvas Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #f1f5f9;
+      --card-bg: #ffffff;
+      --text-color: #0f172a;
+      --primary: #2563eb;       /* Python/Thonny Blue */
+      --secondary: #059669;     /* Python Green */
+      --accent: #d97706;        /* Warm Accent */
+      --thonny-header: #2b5b84;  /* Thonny IDE Classic Header */
+      --thonny-editor: #f8fafc;
+      --thonny-shell: #0f172a;
+      --thonny-shell-text: #38bdf8;
+      --border-color: #cbd5e1;
+      --focus-ring: #000000;
+    }
+
+    body.high-contrast {
+      --bg-color: #000000;
+      --card-bg: #121212;
+      --text-color: #ffffff;
+      --primary: #ffff00;
+      --secondary: #00ffff;
+      --accent: #ff00ff;
+      --thonny-header: #1a1a1a;
+      --thonny-editor: #000000;
+      --thonny-shell: #000000;
+      --thonny-shell-text: #00ff00;
+      --border-color: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .nav-bar {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn-nav {
+      background: var(--card-bg);
+      border: 3px solid var(--primary);
+      color: var(--text-color);
+      padding: 10px 18px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-nav:hover, .btn-nav:focus {
+      outline: 3px solid var(--focus-ring);
+      background: var(--primary);
+      color: white;
+    }
+
+    body.high-contrast .btn-nav:hover {
+      color: #000000;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--thonny-header), var(--primary));
+      color: white;
+      text-align: center;
+      padding: 25px 20px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 1100px;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    body.high-contrast header {
+      background: #000000;
+      border: 3px solid #ffff00;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      background: rgba(255, 255, 255, 0.15);
+      display: inline-block;
+      padding: 4px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    main {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .tab-navigation {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .btn-module {
+      background: var(--card-bg);
+      border: 3px solid var(--border-color);
+      color: var(--text-color);
+      padding: 12px 20px;
+      border-radius: 16px;
+      font-size: 1.05rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-module.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    body.high-contrast .btn-module.active {
+      color: #000000;
+    }
+
+    .card-content {
+      background: var(--card-bg);
+      border: 3px solid var(--border-color);
+      border-radius: 24px;
+      padding: 25px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+    }
+
+    .thonny-window {
+      border: 3px solid #1e293b;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #1e293b;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      margin-top: 15px;
+    }
+
+    .thonny-toolbar {
+      background: #334155;
+      padding: 10px 15px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 2px solid #0f172a;
+      flex-wrap: wrap;
+    }
+
+    .btn-thonny-run {
+      background: #22c55e;
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    }
+
+    .btn-thonny-run:hover {
+      background: #16a34a;
+    }
+
+    .btn-thonny-clear {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .thonny-filename {
+      color: #f8fafc;
+      font-weight: bold;
+      font-family: monospace;
+      margin-left: auto;
+      background: #0f172a;
+      padding: 4px 12px;
+      border-radius: 8px;
+    }
+
+    .thonny-editor-container {
+      background: var(--thonny-editor);
+      position: relative;
+    }
+
+    .thonny-editor {
+      width: 100%;
+      height: 240px;
+      padding: 15px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.1rem;
+      border: none;
+      resize: vertical;
+      outline: none;
+      background: transparent;
+      color: var(--text-color);
+      line-height: 1.5;
+    }
+
+    body.high-contrast .thonny-editor {
+      color: #ffffff;
+      background: #000000;
+    }
+
+    .thonny-shell-container {
+      background: var(--thonny-shell);
+      border-top: 3px solid #334155;
+      padding: 15px;
+      min-height: 150px;
+      max-height: 250px;
+      overflow-y: auto;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    .shell-title {
+      color: #94a3b8;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .shell-output {
+      color: var(--thonny-shell-text);
+      font-size: 1.05rem;
+      white-space: pre-wrap;
+    }
+
+    .shell-prompt {
+      color: #f59e0b;
+      font-weight: bold;
+    }
+
+    .grid-concepts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-top: 15px;
+    }
+
+    .concept-card {
+      background: var(--bg-color);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .concept-title {
+      font-size: 1.25rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    body.high-contrast .concept-title {
+      color: #ffff00;
+    }
+
+    code, pre {
+      background: #0f172a;
+      color: #38bdf8;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    pre {
+      padding: 12px;
+      overflow-x: auto;
+      display: block;
+      margin: 8px 0;
+      color: #f8fafc;
+    }
+
+    .code-hl-keyword { color: #f43f5e; font-weight: bold; }
+    .code-hl-string { color: #22c55e; }
+    .code-hl-func { color: #3b82f6; font-weight: bold; }
+    .code-hl-num { color: #fbbf24; }
+
+    .btn-load-demo {
+      background: var(--secondary);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-align: center;
+    }
+
+    .btn-load-demo:hover {
+      opacity: 0.9;
+    }
+
+    .speak-btn {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      margin-left: 6px;
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA DE NAVEGACIÓN Y ACCESIBILIDAD -->
+  <div class="nav-bar">
+    <a href="index.html" class="btn-nav">⬅️ Volver al Portal Principal</a>
+    <div>
+      <button class="btn-nav" onclick="toggleContrast()">👁️ Alto Contraste</button>
+      <button class="btn-nav" onclick="celebrate()">🎉 Celebrar</button>
+    </div>
+  </div>
+
+  <!-- CABECERA PRINCIPAL -->
+  <header>
+    <h1>🐍 Laboratorio de Python con Thonny IDE</h1>
+    <p>Itinerario de Programación • Práctica Interactiva y Accesible</p>
+  </header>
+
+  <main>
+    <!-- SELECTOR DE MÓDULOS -->
+    <nav class="tab-navigation">
+      <button class="btn-module active" onclick="switchTab('thonny-ide', this)">💻 Entorno Thonny</button>
+      <button class="btn-module" onclick="switchTab('conceptos', this)">📚 Conceptos Clave</button>
+      <button class="btn-module" onclick="switchTab('desafios', this)">🎯 Desafíos Prácticos</button>
+    </nav>
+
+    <!-- MÓDULO 1: SIMULADOR THONNY IDE -->
+    <section id="thonny-ide" class="card-content">
+      <h2 style="color: var(--primary);">💻 Simulador del Entorno Thonny IDE</h2>
+      <p>Escribe o modifica código Python en el editor y presiona <strong>"▶ Ejecutar (Run)"</strong> para ver la salida en la consola Shell inferior.</p>
+
+      <div class="thonny-window">
+        <!-- Barra de herramientas Thonny -->
+        <div class="thonny-toolbar">
+          <button class="btn-thonny-run" onclick="runPythonCode()">▶ Ejecutar (Run)</button>
+          <button class="btn-thonny-clear" onclick="clearShell()">🧹 Limpiar Shell</button>
+          <span class="thonny-filename">main.py</span>
+        </div>
+
+        <!-- Editor de código -->
+        <div class="thonny-editor-container">
+          <textarea id="pythonEditor" class="thonny-editor" spellcheck="false" placeholder="# Escribe tu código Python aquí..."></textarea>
+        </div>
+
+        <!-- Shell de salida -->
+        <div class="thonny-shell-container">
+          <div class="shell-title">Python 3.10.11 (Thonny Shell Simulado)</div>
+          <div id="shellOutput" class="shell-output"><span class="shell-prompt">>>> </span>Listo para ejecutar código.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 2: CONCEPTOS CLAVE -->
+    <section id="conceptos" class="card-content" style="display: none;">
+      <h2 style="color: var(--primary); margin-bottom: 15px;">📚 Conceptos Fundamentales de Python</h2>
+
+      <div class="grid-concepts">
+
+        <!-- CONCEPT 1: PRINT COMILLAS VS SIN COMILLAS -->
+        <article class="concept-card">
+          <h3 class="concept-title">
+            1. print() con y sin comillas
+            <button class="speak-btn" onclick="speakText('print con comillas imprime texto literalmente. Sin comillas imprime el valor de una variable o calcula un número.')" title="Escuchar explicación">🔊</button>
+          </h3>
+          <p>Las comillas definen una <strong>cadena de texto (String)</strong>. Sin comillas, Python evalúa variables o realiza números/cálculos.</p>
+          <pre><span class="code-hl-func">print</span>(<span class="code-hl-string">"Hola Mundo"</span>) <span class="code-hl-string"># Texto directo</span>
+<span class="code-hl-func">print</span>(<span class="code-hl-num">10 + 5</span>)        <span class="code-hl-string"># Imprime 15</span></pre>
+          <button class="btn-load-demo" onclick="loadDemo('print_demo')">📥 Cargar en Thonny</button>
+        </article>
+
+        <!-- CONCEPT 2: VARIABLES E INPUT / INT / FLOAT -->
+        <article class="concept-card">
+          <h3 class="concept-title">
+            2. input(), int() y float()
+            <button class="speak-btn" onclick="speakText('input siempre recibe texto. Usamos int o float para convertirlo en números enteros o decimales.')" title="Escuchar explicación">🔊</button>
+          </h3>
+          <p><code>input()</code> ingresa datos como texto. Usamos <code>int()</code> para enteros y <code>float()</code> para decimales.</p>
+          <pre>edad = <span class="code-hl-func">int</span>(<span class="code-hl-func">input</span>(<span class="code-hl-string">"Edad: "</span>))
+precio = <span class="code-hl-func">float</span>(<span class="code-hl-string">"150.50"</span>)
+<span class="code-hl-func">print</span>(<span class="code-hl-string">"Total:"</span>, precio * <span class="code-hl-num">2</span>)</pre>
+          <button class="btn-load-demo" onclick="loadDemo('input_demo')">📥 Cargar en Thonny</button>
+        </article>
+
+        <!-- CONCEPT 3: LISTAS, FOR Y PROMEDIOS -->
+        <article class="concept-card">
+          <h3 class="concept-title">
+            3. Listas, bucle for y promedios
+            <button class="speak-btn" onclick="speakText('Una lista guarda varios valores. Con el bucle for recorremos la lista y podemos calcular promedios.')" title="Escuchar explicación">🔊</button>
+          </h3>
+          <p>Para calcular promedios recorremos la lista con un bucle <code>for</code> acumulando la suma, o usamos <code>sum() / len()</code>.</p>
+          <pre>notas = [<span class="code-hl-num">8, 9, 7, 10</span>]
+suma = <span class="code-hl-num">0</span>
+<span class="code-hl-keyword">for</span> n <span class="code-hl-keyword">in</span> notas:
+    suma = suma + n
+promedio = suma / <span class="code-hl-func">len</span>(notas)
+<span class="code-hl-func">print</span>(<span class="code-hl-string">"Promedio:"</span>, promedio)</pre>
+          <button class="btn-load-demo" onclick="loadDemo('lista_demo')">📥 Cargar en Thonny</button>
+        </article>
+
+        <!-- CONCEPT 4: MÓDULOS (MATH & RANDOM) -->
+        <article class="concept-card">
+          <h3 class="concept-title">
+            4. Módulos en Python
+            <button class="speak-btn" onclick="speakText('Los módulos son librerías con funciones avanzadas como math para matemática y random para azar.')" title="Escuchar explicación">🔊</button>
+          </h3>
+          <p>Importamos módulos con <code>import</code> para usar funciones avanzadas como <code>math.sqrt()</code> o <code>random.randint()</code>.</p>
+          <pre><span class="code-hl-keyword">import</span> math
+<span class="code-hl-keyword">import</span> random
+
+<span class="code-hl-func">print</span>(<span class="code-hl-string">"Raíz de 16:"</span>, math.sqrt(<span class="code-hl-num">16</span>))
+<span class="code-hl-func">print</span>(<span class="code-hl-string">"Dado:"</span>, random.randint(<span class="code-hl-num">1</span>, <span class="code-hl-num">6</span>))</pre>
+          <button class="btn-load-demo" onclick="loadDemo('modulos_demo')">📥 Cargar en Thonny</button>
+        </article>
+
+        <!-- CONCEPT 5: CONDICIONALES IF / ELSE (NUEVO) -->
+        <article class="concept-card">
+          <h3 class="concept-title">
+            5. Toma de Decisiones (if / else)
+            <button class="speak-btn" onclick="speakText('Las estructuras condicionales evalúan una condición. Si es verdadera ejecutan un bloque de código sangrado, y si no, ejecutan el bloque else.')" title="Escuchar explicación">🔊</button>
+          </h3>
+          <p>Permite que el programa tome diferentes caminos según se cumpla una condición. ¡Atención a los cuatro espacios de sangría (indentación)!</p>
+          <pre>nota = <span class="code-hl-num">7</span>
+<span class="code-hl-keyword">if</span> nota >= <span class="code-hl-num">6</span>:
+    <span class="code-hl-func">print</span>(<span class="code-hl-string">"¡Materia Aprobada!"</span>)
+<span class="code-hl-keyword">else</span>:
+    <span class="code-hl-func">print</span>(<span class="code-hl-string">"Debes Desaprobar"</span>)</pre>
+          <button class="btn-load-demo" onclick="loadDemo('ifelse_demo')">📥 Cargar en Thonny</button>
+        </article>
+
+        <!-- CONCEPT 6: FUNCIONES DEF (NUEVO) -->
+        <article class="concept-card">
+          <h3 class="concept-title">
+            6. Funciones Personalizadas (def)
+            <button class="speak-btn" onclick="speakText('Las funciones nos permiten empaquetar bloques de código con un nombre personalizado para reutilizarlos las veces que necesitemos.')" title="Escuchar explicación">🔊</button>
+          </h3>
+          <p>Definimos bloques de código reutilizables usando la palabra clave <code>def</code> seguida del nombre de la función y paréntesis.</p>
+          <pre><span class="code-hl-keyword">def</span> <span class="code-hl-func">saludar</span>(nombre):
+    <span class="code-hl-func">print</span>(<span class="code-hl-string">"¡Hola"</span>, nombre, <span class="code-hl-string">"bienvenido al taller!"</span>)
+
+saludar(<span class="code-hl-string">"Martín"</span>)
+saludar(<span class="code-hl-string">"Sofía"</span>)</pre>
+          <button class="btn-load-demo" onclick="loadDemo('def_demo')">📥 Cargar en Thonny</button>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- MÓDULO 3: DESAFÍOS PRÁCTICOS -->
+    <section id="desafios" class="card-content" style="display: none;">
+      <h2 style="color: var(--primary); margin-bottom: 15px;">🎯 Desafíos Prácticos de Programación (9 Ejercicios)</h2>
+      <p>Selecciona un desafío para cargarlo en el editor Thonny, resuélvelo y verifica el resultado en la consola.</p>
+
+      <div class="grid-concepts">
+        <article class="concept-card">
+          <h3 class="concept-title">Desafío 1: Calculadora de Promedio</h3>
+          <p>Dada una lista de 4 calificaciones, calcula e imprime el promedio final de la alumna.</p>
+          <button class="btn-load-demo" onclick="loadDemo('desafio1')">🚀 Resolver Desafío 1</button>
+        </article>
+
+        <article class="concept-card">
+          <h3 class="concept-title">Desafío 2: Conversor con float()</h3>
+          <p>Ingresa un precio en dólares, conviértelo a pesos usando un tipo de cambio con decimales (float) e imprime el resultado.</p>
+          <button class="btn-load-demo" onclick="loadDemo('desafio2')">🚀 Resolver Desafío 2</button>
+        </article>
+
+        <article class="concept-card">
+          <h3 class="concept-title">Desafío 3: Módulo Math e Hipotenusa</h3>
+          <p>Usa <code>import math</code> y la función <code>math.sqrt()</code> para calcular la hipotenusa de un triángulo rectángulo.</p>
+          <button class="btn-load-demo" onclick="loadDemo('desafio3')">🚀 Resolver Desafío 3</button>
+        </article>
+
+        <!-- NUEVOS 6 DESAFÍOS -->
+        <article class="concept-card">
+          <h3 class="concept-title">Desafío 4: Clasificador de Edad</h3>
+          <p>Usa <code>input()</code> e <code>if / else</code> para verificar si la persona es mayor de edad (18 años o más).</p>
+          <button class="btn-load-demo" onclick="loadDemo('desafio4')">🚀 Resolver Desafío 4</button>
+        </article>
+
+        <article class="concept-card">
+          <h3 class="concept-title">Desafío 5: Calculadora de Descuento (Economía)</h3>
+          <p>Si el monto de compra supera los $5000, aplica un 10% de descuento. Si no, cobra el total completo.</p>
+          <button class="btn-load-demo" onclick="loadDemo('desafio5')">🚀 Resolver Desafío 5</button>
+        </article>
+
+        <article class="concept-card">
+          <h3 class="concept-title">Desafío 6: Simulador de Dado de Rol</h3>
+          <p>Importa la librería <code>random</code> e imprime el lanzamiento de un dado de 20 caras (1 a 20).</p>
+          <button class="btn-load-demo" onclick="loadDemo('desafio6')">🚀 Resolver Desafío 6</button>
+        </article>
+
+        <article class="concept-card">
+          <h3 class="concept-title">Desafío 7: Función de Saludo Escolar</h3>
+          <p>Crea una función llamada <code>saludo_escolar(nombre, curso)</code> que imprima una bienvenida personalizada.</p>
+          <button class="btn-load-demo" onclick="loadDemo('desafio7')">🚀 Resolver Desafío 7</button>
+        </article>
+
+        <article class="concept-card">
+          <h3 class="concept-title">Desafío 8: Filtrado de Notas Aprobadas</h3>
+          <p>Recorre una lista de notas e imprime únicamente las calificaciones mayores o iguales a 6.</p>
+          <button class="btn-load-demo" onclick="loadDemo('desafio8')">🚀 Resolver Desafío 8</button>
+        </article>
+
+        <article class="concept-card">
+          <h3 class="concept-title">Desafío 9: Área de Círculo con Math</h3>
+          <p>Calcula el área de un círculo ($Area = \pi \cdot r^2$) utilizando <code>math.pi</code> y el radio ingresado.</p>
+          <button class="btn-load-demo" onclick="loadDemo('desafio9')">🚀 Resolver Desafío 9</button>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Itinerario de Programación • Educación Inclusiva y Tecnología DUA</p>
+  </footer>
+
+  <script>
+    /* PRELOADED DEMO CODES */
+    const demos = {
+      print_demo: `# Demostración de print() con y sin comillas
+nombre = "Lucía"
+nota1 = 8
+nota2 = 10
+
+print("--- REPORTE DE NOTAS ---")
+print("Estudiante:", nombre)
+print("Suma de notas:", nota1 + nota2)
+print("Texto directo vs Variable:", "nota1", "es igual a", nota1)
+`,
+      input_demo: `# Ejemplo con input(), int() y float()
+nombre = input("¿Cuál es tu nombre? ")
+edad = int(input("¿Cuántos años tienes? "))
+precio = float(input("Ingrese precio del producto ($): "))
+
+print("\n--- RESUMEN ---")
+print("Hola", nombre)
+print("El año que viene tendrás:", edad + 1, "años")
+print("Precio con IVA (21%):", precio * 1.21)
+`,
+      lista_demo: `# Cálculo de promedios recorriendo lista con bucle for
+calificaciones = [8.5, 9.0, 7.5, 10.0, 9.5]
+suma_total = 0
+
+print("Lista de notas:", calificaciones)
+
+# Recorremos la lista acumulando los valores
+for nota in calificaciones:
+    suma_total = suma_total + nota
+
+promedio = suma_total / len(calificaciones)
+
+print("Suma Total:", suma_total)
+print("Promedio Final:", promedio)
+`,
+      modulos_demo: `# Uso de módulos: math y random
+import math
+import random
+
+numero = 25
+raiz = math.sqrt(numero)
+pi_valor = math.pi
+
+numero_azar = random.randint(1, 100)
+
+print("La raíz cuadrada de", numero, "es:", raiz)
+print("Valor de PI aproximado:", round(pi_valor, 4))
+print("Número aleatorio generado (1-100):", numero_azar)
+`,
+      ifelse_demo: `# Demostración de toma de decisiones con if / else
+edad = int(input("Ingrese su edad: "))
+
+if edad >= 18:
+    print("Acceso Permitido: Eres mayor de edad.")
+else:
+    print("Acceso Restringido: Eres menor de edad.")
+`,
+      def_demo: `# Definición y llamada a funciones personalizadas
+def multiplicar(a, b):
+    resultado = a * b
+    return resultado
+
+res1 = multiplicar(5, 4)
+res2 = multiplicar(10, 3)
+
+print("Resultado 1:", res1)
+print("Resultado 2:", res2)
+`,
+      desafio1: `# DESAFÍO 1: Completa el código para calcular el promedio
+notas = [7, 8, 9, 10]
+
+suma = sum(notas)
+promedio = suma / len(notas)
+
+print("Notas del alumno:", notas)
+print("Promedio logrado:", promedio)
+`,
+      desafio2: `# DESAFÍO 2: Conversor de Moneda
+dolares = float(input("Cantidad de USD a convertir: "))
+tipo_cambio = 1250.50  # valor flotante
+
+pesos = dolares * tipo_cambio
+print("Monto en Pesos ARS: $", pesos)
+`,
+      desafio3: `# DESAFÍO 3: Hipotenusa con Módulo Math
+import math
+
+cateto_a = 3
+cateto_b = 4
+
+hipotenusa = math.sqrt(cateto_a**2 + cateto_b**2)
+
+print("Cateto A:", cateto_a)
+print("Cateto B:", cateto_b)
+print("Hipotenusa calculada:", hipotenusa)
+`,
+      desafio4: `# DESAFÍO 4: Clasificador de Edad
+edad = int(input("Ingresa tu edad actual: "))
+
+if edad >= 18:
+    print("Resultado: Eres Ciudadano Mayor de Edad")
+else:
+    print("Resultado: Eres Menor de Edad")
+`,
+      desafio5: `# DESAFÍO 5: Calculadora de Descuento
+monto = float(input("Ingrese el monto total de la compra: "))
+
+if monto > 5000:
+    descuento = monto * 0.10
+    total = monto - descuento
+    print("¡Felicidades! Tienes un 10% de descuento ($", descuento, ")")
+    print("Monto final a pagar: $", total)
+else:
+    print("No alcanza el mínimo para descuento.")
+    print("Monto final a pagar: $", monto)
+`,
+      desafio6: `# DESAFÍO 6: Dado de Rol (1-20)
+import random
+
+lanzamiento = random.randint(1, 20)
+
+print("🎲 Has tirado el dado de 20 caras...")
+print("Resultado del tiro:", lanzamiento)
+`,
+      desafio7: `# DESAFÍO 7: Función de Saludo Escolar
+def saludo_escolar(nombre, curso):
+    print("¡Bienvenido/a", nombre, "al curso de", curso, "!")
+
+saludo_escolar("Camila", "Programación Secundaria")
+saludo_escolar("Joaquín", "Informática DUA")
+`,
+      desafio8: `# DESAFÍO 8: Filtrado de Notas Aprobadas
+todas_las_notas = [4, 8, 5, 9, 10, 3, 7]
+
+print("Notas mayores o iguales a 6 (Aprobadas):")
+for n in todas_las_notas:
+    if n >= 6:
+        print("-> Nota Aprobada:", n)
+`,
+      desafio9: `# DESAFÍO 9: Área de Círculo con Math
+import math
+
+radio = float(input("Ingresa el radio del círculo en cm: "))
+area = math.pi * (radio ** 2)
+
+print("Radio ingresado:", radio, "cm")
+print("Área calculada del círculo:", round(area, 2), "cm²")
+`
+    };
+
+    /* INITIALIZATION */
+    window.onload = function() {
+      loadDemo('print_demo');
+    };
+
+    /* TAB SWITCHING LOGIC */
+    function switchTab(tabId, btnElement) {
+      document.querySelectorAll('main > section').forEach(sec => sec.style.display = 'none');
+      document.getElementById(tabId).style.display = 'block';
+
+      document.querySelectorAll('.btn-module').forEach(btn => btn.classList.remove('active'));
+      btnElement.classList.add('active');
+    }
+
+    /* LOAD DEMO CODE INTO EDITOR */
+    function loadDemo(demoKey) {
+      const editor = document.getElementById('pythonEditor');
+      if (demos[demoKey]) {
+        editor.value = demos[demoKey];
+        const thonnyTabBtn = document.querySelectorAll('.btn-module')[0];
+        switchTab('thonny-ide', thonnyTabBtn);
+        runPythonCode();
+      }
+    }
+
+    /* SIMULATED PYTHON EXECUTION ENGINE IN JS (IMPROVED) */
+    function runPythonCode() {
+      const code = document.getElementById('pythonEditor').value;
+      const shell = document.getElementById('shellOutput');
+      
+      shell.innerHTML = `<span class="shell-prompt">>>> </span>%Run main.py\n`;
+
+      try {
+        let lines = code.split('\n');
+        let variables = {};
+        let outputText = '';
+        let insideIf = false;
+        let ifConditionMet = false;
+
+        for (let i = 0; i < lines.length; i++) {
+          let line = lines[i];
+          let trimmed = line.trim();
+          let isIndented = line.startsWith('    ') || line.startsWith('\t');
+          
+          if (trimmed.startsWith('#') || trimmed === '') continue;
+
+          // Manage IF / ELSE execution blocks
+          if (insideIf && isIndented && !ifConditionMet) {
+            continue; // Skip indented line if IF condition was false
+          }
+
+          if (trimmed.startsWith('else:')) {
+            insideIf = true;
+            ifConditionMet = !ifConditionMet;
+            continue;
+          }
+
+          if (trimmed.startsWith('if ')) {
+            insideIf = true;
+            let condExpr = trimmed.replace('if ', '').replace(':', '').trim();
+            for (let v in variables) {
+              let reg = new RegExp('\\b' + v + '\\b', 'g');
+              condExpr = condExpr.replace(reg, JSON.stringify(variables[v]));
+            }
+            try {
+              ifConditionMet = Boolean(eval(condExpr));
+            } catch(e) {
+              ifConditionMet = true;
+            }
+            continue;
+          }
+
+          if (!isIndented && !trimmed.startsWith('else:')) {
+            insideIf = false;
+          }
+
+          // Handle input() prompts
+          if (trimmed.includes('input(')) {
+            let varMatch = trimmed.match(/^([a-zA-Z0-9_]+)\s*=\s*(?:int\(|float\()?input\((.*)\)\)?/);
+            let promptMsg = "Ingrese valor para Python:";
+            if (varMatch && varMatch[2]) {
+              promptMsg = varMatch[2].replace(/["']/g, '');
+            }
+            let userVal = prompt(`[Simulador Python Input]\n${promptMsg}`, "10");
+            if (userVal === null) userVal = "0";
+
+            let varName = varMatch ? varMatch[1] : 'temp_var';
+            if (trimmed.includes('int(')) {
+              variables[varName] = parseInt(userVal) || 0;
+            } else if (trimmed.includes('float(')) {
+              variables[varName] = parseFloat(userVal) || 0.0;
+            } else {
+              variables[varName] = userVal;
+            }
+            continue;
+          }
+
+          // Handle simple assignments
+          if (trimmed.includes('=') && !trimmed.startsWith('print') && !trimmed.startsWith('for') && !trimmed.startsWith('def')) {
+            let parts = trimmed.split('=');
+            let varName = parts[0].trim();
+            let expr = parts[1].trim();
+
+            if (expr.startsWith('[') && expr.endsWith(']')) {
+              let items = expr.slice(1, -1).split(',').map(x => {
+                let v = x.trim();
+                return isNaN(v) ? v.replace(/["']/g, '') : parseFloat(v);
+              });
+              variables[varName] = items;
+            } else {
+              let evalExpr = expr;
+              for (let v in variables) {
+                let reg = new RegExp('\\b' + v + '\\b', 'g');
+                evalExpr = evalExpr.replace(reg, JSON.stringify(variables[v]));
+              }
+              evalExpr = evalExpr.replace(/\bmath\.sqrt\b/g, 'Math.sqrt')
+                                 .replace(/\bmath\.pi\b/g, 'Math.PI')
+                                 .replace(/\brandom\.randint\((\d+),\s*(\d+)\)/g, 'Math.floor(Math.random()*($2-$1+1))+$1')
+                                 .replace(/\blen\(([^)]+)\)/g, '$1.length')
+                                 .replace(/\bsum\(([^)]+)\)/g, '$1.reduce((a,b)=>a+b,0)');
+              try {
+                variables[varName] = eval(evalExpr);
+              } catch(e) {
+                variables[varName] = expr.replace(/["']/g, '');
+              }
+            }
+            continue;
+          }
+
+          // Handle DEF function calls
+          if (trimmed.startsWith('saludo_escolar(') || trimmed.startsWith('saludar(')) {
+            let funcArgs = trimmed.substring(trimmed.indexOf('(') + 1, trimmed.lastIndexOf(')')).split(',');
+            let cleanArgs = funcArgs.map(a => a.trim().replace(/["']/g, ''));
+            outputText += `¡Bienvenido/a ${cleanArgs[0]} al curso de ${cleanArgs[1] || 'Programación'}!\n`;
+            continue;
+          }
+
+          // Handle Print statements
+          if (trimmed.startsWith('print(')) {
+            let content = trimmed.substring(6, trimmed.lastIndexOf(')'));
+            let args = content.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            let printedLine = args.map(arg => {
+              arg = arg.trim();
+              if ((arg.startsWith('"') && arg.endsWith('"')) || (arg.startsWith("'") && arg.endsWith("'"))) {
+                return arg.slice(1, -1);
+              }
+              let evalArg = arg;
+              for (let v in variables) {
+                let reg = new RegExp('\\b' + v + '\\b', 'g');
+                evalArg = evalArg.replace(reg, JSON.stringify(variables[v]));
+              }
+              evalArg = evalArg.replace(/\bround\(([^,]+),\s*(\d+)\)/g, 'Number($1).toFixed($2)');
+              try {
+                return eval(evalArg);
+              } catch(e) {
+                return variables[arg] !== undefined ? variables[arg] : arg;
+              }
+            }).join(' ');
+
+            outputText += printedLine + '\n';
+          }
+        }
+
+        if (outputText === '') {
+          outputText = "Código ejecutado correctamente.\n";
+        }
+
+        shell.innerHTML += outputText;
+        celebrate();
+
+      } catch (err) {
+        shell.innerHTML += `<span style="color:#ef4444;">Error de Sintaxis (SyntaxError): Verifique comillas, paréntesis o indentación.\n${err.message}</span>`;
+      }
+    }
+
+    function clearShell() {
+      document.getElementById('shellOutput').innerHTML = `<span class="shell-prompt">>>> </span>Shell limpiada.\n`;
+    }
+
+    /* ACCESSIBILITY & DUA UTILITIES */
+    function toggleContrast() {
+      document.body.classList.toggle('high-contrast');
+    }
+
+    function speakText(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'es-ES';
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function celebrate() {
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
+      }
+    }
+  </script>
+</body>
+</html>
